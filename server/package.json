@@ -38,6 +38,10 @@
     "spawn-rx": "^5.1.2",
     "ws": "^8.18.0",
     "zod": "^3.25.76",
-    "express-rate-limit": "^8.2.1"
+    "express-rate-limit": "^8.2.1",
+    "@x402/fetch": "latest",
+    "@x402/core": "latest",
+    "@x402/evm": "latest",
+    "viem": "^2"
   }
 }

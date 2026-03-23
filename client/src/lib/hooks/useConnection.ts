@@ -85,6 +85,9 @@ interface UseConnectionOptions {
   env: Record<string, string>;
   // Custom headers support
   customHeaders?: CustomHeaders;
+  // x402 payment protocol support
+  x402Enabled?: boolean;
+  x402PrivateKey?: string;
   oauthClientId?: string;
   oauthClientSecret?: string;
   oauthScope?: string;
@@ -110,6 +113,8 @@ export function useConnection({
   sseUrl,
   env,
   customHeaders,
+  x402Enabled,
+  x402PrivateKey,
   oauthClientId,
   oauthClientSecret,
   oauthScope,
@@ -561,6 +566,12 @@ export function useConnection({
       // Add custom header names as a special request header for server processing
       if (customHeaderNames.length > 0) {
         headers["x-custom-auth-headers"] = JSON.stringify(customHeaderNames);
+      }
+
+      // Inject x402 payment protocol headers for proxy consumption
+      if (x402Enabled && x402PrivateKey) {
+        headers["x-x402-enabled"] = "true";
+        headers["x-x402-private-key"] = x402PrivateKey;
       }
 
       // Create appropriate transport

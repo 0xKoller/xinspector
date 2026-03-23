@@ -27,11 +27,14 @@ import { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import { findActualExecutable } from "spawn-rx";
-import mcpProxy from "./mcpProxy.js";
+import mcpProxy, { X402ProxyHandler } from "./mcpProxy.js";
 import { randomUUID, randomBytes, timingSafeEqual } from "node:crypto";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { readFileSync } from "fs";
+import { x402Client, x402HTTPClient } from "@x402/fetch";
+import { registerExactEvmScheme } from "@x402/evm/exact/client";
+import { privateKeyToAccount } from "viem/accounts";
 
 const DEFAULT_MCP_PROXY_LISTEN_PORT = "6277";
 
@@ -86,8 +89,12 @@ const getHttpHeaders = (req: express.Request): Record<string, string> => {
       lowerKey === "authorization" ||
       lowerKey === "last-event-id"
     ) {
-      // Exclude the proxy's own authentication header and the Client <-> Proxy session ID header
-      if (lowerKey !== "x-mcp-proxy-auth" && lowerKey !== "mcp-session-id") {
+      // Exclude the proxy's own authentication header, session ID header, and x402 config headers
+      if (
+        lowerKey !== "x-mcp-proxy-auth" &&
+        lowerKey !== "mcp-session-id" &&
+        !lowerKey.startsWith("x-x402-")
+      ) {
         const value = req.headers[key];
 
         if (typeof value === "string") {
@@ -145,6 +152,17 @@ const getHttpHeaders = (req: express.Request): Record<string, string> => {
     }
   }
   return headers;
+};
+
+/**
+ * Extracts x402 payment protocol configuration from request headers.
+ */
+const getX402Config = (
+  req: express.Request,
+): { enabled: boolean; privateKey: string | null } => {
+  const enabled = req.headers["x-x402-enabled"] === "true";
+  const privateKey = (req.headers["x-x402-private-key"] as string) || null;
+  return { enabled, privateKey };
 };
 
 /**
@@ -303,10 +321,48 @@ const createWebReadableStream = (nodeStream: any): ReadableStream => {
  * `Content-Type` are preserved. For SSE requests, it also converts Node.js
  * streams to web-compatible streams.
  */
-const createCustomFetch = (headerHolder: { headers: HeadersInit }) => {
-  return async (
+/**
+ * Initializes x402 payment client from config.
+ */
+const createX402Client = (x402Config?: {
+  enabled: boolean;
+  privateKey: string | null;
+}): {
+  client: InstanceType<typeof x402Client> | null;
+  http: InstanceType<typeof x402HTTPClient> | null;
+} => {
+  if (!x402Config?.enabled || !x402Config.privateKey) {
+    return { client: null, http: null };
+  }
+  try {
+    const evmSigner = privateKeyToAccount(
+      x402Config.privateKey as `0x${string}`,
+    );
+    const client = new x402Client();
+    registerExactEvmScheme(client, { signer: evmSigner });
+    const http = new x402HTTPClient(client);
+    console.log("x402: Payment client initialized");
+    return { client, http };
+  } catch (error) {
+    console.error("x402: Failed to initialize payment client:", error);
+    return { client: null, http: null };
+  }
+};
+
+const createCustomFetch = (
+  headerHolder: { headers: HeadersInit },
+  x402: {
+    client: InstanceType<typeof x402Client> | null;
+    http: InstanceType<typeof x402HTTPClient> | null;
+  },
+) => {
+  const x402PaymentClient = x402.client;
+  const x402Http = x402.http;
+
+  const doFetch = async (
     input: RequestInfo | URL,
     init?: RequestInit,
+    extraHeaders?: Record<string, string>,
   ): Promise<Response> => {
     // Determine the headers from the original request/init.
     // The SDK may pass a Request object or a URL and an init object.
@@ -322,17 +378,39 @@ const createCustomFetch = (headerHolder: { headers: HeadersInit }) => {
       finalHeaders.set(key, value);
     });
 
+    // Merge any extra headers (e.g., x402 payment signature on retry)
+    if (extraHeaders) {
+      for (const [key, value] of Object.entries(extraHeaders)) {
+        finalHeaders.set(key, value);
+      }
+    }
+
     // Convert Headers to a plain object for node-fetch compatibility
     const headersObject: Record<string, string> = {};
     finalHeaders.forEach((value, key) => {
       headersObject[key] = value;
     });
 
+    // Log x402 payment headers if present
+    const paymentHeader =
+      headersObject["x-payment"] || headersObject["payment-signature"];
+    if (paymentHeader) {
+      console.log(
+        `x402: Sending request with payment header (${paymentHeader.substring(0, 50)}...)`,
+      );
+      console.log("x402: All outgoing headers:", Object.keys(headersObject));
+    }
+
     // Get the response from node-fetch (cast input and init to handle type differences)
     const response = await fetch(
       input as any,
       { ...init, headers: headersObject } as any,
     );
+
+    // Log response status when x402 payment was attempted
+    if (paymentHeader) {
+      console.log(`x402: MCP server response status: ${response.status}`);
+    }
 
     // Check if this is an SSE request by looking at the Accept header
     const acceptHeader = finalHeaders.get("Accept");
@@ -360,6 +438,56 @@ const createCustomFetch = (headerHolder: { headers: HeadersInit }) => {
     // For non-SSE requests, return the response as-is (cast to handle type differences)
     return response as unknown as Response;
   };
+
+  return async (
+    input: RequestInfo | URL,
+    init?: RequestInit,
+  ): Promise<Response> => {
+    const response = await doFetch(input, init);
+
+    // If x402 is not enabled or response is not 402, return as-is
+    if (!x402PaymentClient || !x402Http || response.status !== 402) {
+      return response;
+    }
+
+    // Handle 402 Payment Required — sign payment and retry
+    console.log("x402: Received 402 Payment Required, processing payment...");
+    try {
+      // Parse payment requirements from response body and headers
+      const getHeader = (name: string) => response.headers.get(name);
+      let body: unknown;
+      try {
+        const responseText = await response.text();
+        if (responseText) {
+          body = JSON.parse(responseText);
+        }
+      } catch {
+        /* body parsing is optional — requirements may be in headers only */
+      }
+
+      const paymentRequired = x402Http.getPaymentRequiredResponse(
+        getHeader,
+        body,
+      );
+      console.log("x402: Payment requirements parsed, creating payload...");
+
+      // Create signed payment payload
+      const paymentPayload =
+        await x402PaymentClient.createPaymentPayload(paymentRequired);
+      const paymentHeaders =
+        x402Http.encodePaymentSignatureHeader(paymentPayload);
+      console.log("x402: Payment signed, retrying request with signature...");
+
+      // Retry the original request with payment signature headers
+      const retryResponse = await doFetch(input, init, paymentHeaders);
+      console.log(`x402: Retry response status: ${retryResponse.status}`);
+      return retryResponse;
+    } catch (error) {
+      console.error("x402: Payment handling failed:", error);
+      // Re-fetch the original request so the 402 body is available to the caller
+      return doFetch(input, init);
+    }
+  };
 };
 
 const createTransport = async (
@@ -367,11 +495,17 @@ const createTransport = async (
 ): Promise<{
   transport: Transport;
   headerHolder?: { headers: HeadersInit };
+  x402?: {
+    client: InstanceType<typeof x402Client> | null;
+    http: InstanceType<typeof x402HTTPClient> | null;
+  };
 }> => {
   const query = req.query;
   console.log("Query parameters:", JSON.stringify(query));
 
   const transportType = query.transportType as string;
+  const x402Config = getX402Config(req);
+  const x402 = createX402Client(x402Config);
 
   if (transportType === "stdio") {
     const command = (query.command as string).trim();
@@ -405,14 +539,14 @@ const createTransport = async (
 
     const transport = new SSEClientTransport(new URL(url), {
       eventSourceInit: {
-        fetch: createCustomFetch(headerHolder),
+        fetch: createCustomFetch(headerHolder, x402),
       },
       requestInit: {
         headers: headerHolder.headers,
       },
     });
     await transport.start();
-    return { transport, headerHolder };
+    return { transport, headerHolder, x402 };
   } else if (transportType === "streamable-http") {
     const headers = getHttpHeaders(req);
     headers["Accept"] = "text/event-stream, application/json";
@@ -422,11 +556,11 @@ const createTransport = async (
       new URL(query.url as string),
       {
         // Pass a custom fetch to inject the latest headers on each request
-        fetch: createCustomFetch(headerHolder),
+        fetch: createCustomFetch(headerHolder, x402),
       },
     );
     await transport.start();
-    return { transport, headerHolder };
+    return { transport, headerHolder, x402 };
   } else {
     console.error(`Invalid transport type: ${transportType}`);
     throw new Error("Invalid transport type specified");
@@ -502,8 +636,11 @@ app.post(
     } else {
       console.log("New StreamableHttp connection request");
       try {
-        const { transport: serverTransport, headerHolder } =
-          await createTransport(req);
+        const {
+          transport: serverTransport,
+          headerHolder,
+          x402: x402Clients,
+        } = await createTransport(req);
 
         const webAppTransport = new StreamableHTTPServerTransport({
           sessionIdGenerator: randomUUID,
@@ -525,9 +662,41 @@ app.post(
 
         await webAppTransport.start();
 
+        // Build x402 proxy handler if payment client is available
+        let x402Handler: X402ProxyHandler | undefined;
+        if (x402Clients?.client && x402Clients?.http) {
+          const { client: x402c, http: x402h } = x402Clients;
+          x402Handler = {
+            handlePayment: async (paymentInfo) => {
+              // Parse payment requirements using the x402 HTTP client
+              const paymentRequired = x402h.getPaymentRequiredResponse(
+                () => null,
+                paymentInfo,
+              );
+              // Sign the payment
+              const paymentPayload =
+                await x402c.createPaymentPayload(paymentRequired);
+              // Encode as the payment header value (base64 JSON)
+              const paymentHeaders =
+                x402h.encodePaymentSignatureHeader(paymentPayload);
+              // Return the encoded payment value for injection into _meta
+              const paymentValue =
+                paymentHeaders["X-PAYMENT"] ??
+                paymentHeaders["PAYMENT-SIGNATURE"] ??
+                Object.values(paymentHeaders)[0];
+              console.log(
+                "x402: Payment signed, value length:",
+                paymentValue?.length,
+              );
+              return paymentValue ?? null;
+            },
+          };
+        }
+
         mcpProxy({
           transportToClient: webAppTransport,
           transportToServer: serverTransport,
+          x402Handler,
         });
 
         await (webAppTransport as StreamableHTTPServerTransport).handleRequest(
@@ -699,8 +868,11 @@ app.get(
       console.log(
         "New SSE connection request. NOTE: The SSE transport is deprecated and has been replaced by StreamableHttp",
       );
-      const { transport: serverTransport, headerHolder } =
-        await createTransport(req);
+      const {
+        transport: serverTransport,
+        headerHolder,
+        x402: x402ClientsSSE,
+      } = await createTransport(req);
 
       const proxyFullAddress = (req.query.proxyFullAddress as string) || "";
       const prefix = proxyFullAddress || "";
@@ -718,9 +890,33 @@ app.get(
 
       await webAppTransport.start();
 
+      // Build x402 proxy handler for SSE if available
+      let x402HandlerSSE: X402ProxyHandler | undefined;
+      if (x402ClientsSSE?.client && x402ClientsSSE?.http) {
+        const { client: x402c, http: x402h } = x402ClientsSSE;
+        x402HandlerSSE = {
+          handlePayment: async (paymentInfo) => {
+            const paymentRequired = x402h.getPaymentRequiredResponse(
+              () => null,
+              paymentInfo,
+            );
+            const paymentPayload =
+              await x402c.createPaymentPayload(paymentRequired);
+            const paymentHeaders =
+              x402h.encodePaymentSignatureHeader(paymentPayload);
+            const paymentValue =
+              paymentHeaders["X-PAYMENT"] ??
+              paymentHeaders["PAYMENT-SIGNATURE"] ??
+              Object.values(paymentHeaders)[0];
+            return paymentValue ?? null;
+          },
+        };
+      }
+
       mcpProxy({
         transportToClient: webAppTransport,
         transportToServer: serverTransport,
+        x402Handler: x402HandlerSSE,
       });
     } catch (error) {
       if (is401Error(error)) {

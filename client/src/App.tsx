@@ -243,6 +243,14 @@ const App = () => {
     ];
   });
 
+  // x402 payment protocol state
+  const [x402Enabled, setX402Enabled] = useState<boolean>(() => {
+    return localStorage.getItem("x402Enabled") === "true";
+  });
+  const [x402PrivateKey, setX402PrivateKey] = useState<string>(() => {
+    return localStorage.getItem("x402PrivateKey") || "";
+  });
+
   const [pendingSampleRequests, setPendingSampleRequests] = useState<
     Array<
       PendingRequest & {
@@ -392,6 +400,8 @@ const App = () => {
     sseUrl,
     env,
     customHeaders,
+    x402Enabled,
+    x402PrivateKey,
     oauthClientId,
     oauthClientSecret,
     oauthScope,
@@ -553,6 +563,14 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem("lastCustomHeaders", JSON.stringify(customHeaders));
   }, [customHeaders]);
+
+  useEffect(() => {
+    localStorage.setItem("x402Enabled", String(x402Enabled));
+  }, [x402Enabled]);
+
+  useEffect(() => {
+    localStorage.setItem("x402PrivateKey", x402PrivateKey);
+  }, [x402PrivateKey]);
 
   // Auto-migrate from legacy auth when custom headers are empty but legacy auth exists
   useEffect(() => {
@@ -1317,6 +1335,10 @@ const App = () => {
           setConfig={setConfig}
           customHeaders={customHeaders}
           setCustomHeaders={setCustomHeaders}
+          x402Enabled={x402Enabled}
+          setX402Enabled={setX402Enabled}
+          x402PrivateKey={x402PrivateKey}
+          setX402PrivateKey={setX402PrivateKey}
           oauthClientId={oauthClientId}
           setOauthClientId={setOauthClientId}
           oauthClientSecret={oauthClientSecret}
