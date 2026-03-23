@@ -121,11 +121,11 @@ const PromptsTab = ({
               </div>
               <div className="flex flex-col flex-1 min-w-0">
                 <span className="truncate">{prompt.name}</span>
-                <span className="text-sm text-gray-500 text-left line-clamp-2">
+                <span className="text-sm text-muted-foreground text-left line-clamp-2">
                   {prompt.description}
                 </span>
               </div>
-              <ChevronRight className="w-4 h-4 flex-shrink-0 text-gray-400 mt-1" />
+              <ChevronRight className="w-4 h-4 flex-shrink-0 text-muted-foreground mt-1" />
             </div>
           )}
           title="Prompts"
@@ -134,7 +134,7 @@ const PromptsTab = ({
         />
 
         <div className="bg-card border border-border rounded-lg shadow">
-          <div className="p-4 border-b border-gray-200 dark:border-border">
+          <div className="p-4 border-b border-border">
             <div className="flex items-center gap-2">
               {selectedPrompt && (
                 <IconDisplay
@@ -159,7 +159,7 @@ const PromptsTab = ({
             ) : selectedPrompt ? (
               <div className="space-y-4">
                 {selectedPrompt.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-muted-foreground">
                     {selectedPrompt.description}
                   </p>
                 )}
@@ -179,7 +179,7 @@ const PromptsTab = ({
                     />
 
                     {arg.description && (
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {arg.description}
                         {arg.required && (
                           <span className="text-xs mt-1 ml-1">(Required)</span>

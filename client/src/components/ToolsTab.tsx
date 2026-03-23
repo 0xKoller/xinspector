@@ -152,7 +152,7 @@ const AnnotationBadges = ({
           title={`${description}\n\nValue: ${value ? "Yes" : "No"} (${implied ? "implied default" : "explicitly set"})`}
           className={cn(
             "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border",
-            "bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-600",
+            "bg-secondary text-foreground border-border",
             implied && "border-dashed opacity-60",
             !implied && "border-solid",
           )}
@@ -291,11 +291,11 @@ const ToolsTab = ({
               </div>
               <div className="flex flex-col flex-1 min-w-0">
                 <span className="truncate">{tool.title || tool.name}</span>
-                <span className="text-sm text-gray-500 text-left line-clamp-2">
+                <span className="text-sm text-muted-foreground text-left line-clamp-2">
                   {tool.description}
                 </span>
               </div>
-              <ChevronRight className="w-4 h-4 flex-shrink-0 text-gray-400 mt-1" />
+              <ChevronRight className="w-4 h-4 flex-shrink-0 text-muted-foreground mt-1" />
             </div>
           )}
           title="Tools"
@@ -304,7 +304,7 @@ const ToolsTab = ({
         />
 
         <div className="bg-card border border-border rounded-lg shadow">
-          <div className="p-4 border-b border-gray-200 dark:border-border">
+          <div className="p-4 border-b border-border">
             <div className="flex items-center gap-2">
               {selectedTool && (
                 <IconDisplay
@@ -331,7 +331,7 @@ const ToolsTab = ({
                     </AlertDescription>
                   </Alert>
                 )}
-                <p className="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-wrap max-h-48 overflow-y-auto">
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {selectedTool.description}
                 </p>
                 <AnnotationBadges
@@ -357,11 +357,11 @@ const ToolsTab = ({
                         <div className="flex justify-between">
                           <Label
                             htmlFor={key}
-                            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            className="block text-sm font-medium text-foreground"
                           >
                             {key}
                             {required && (
-                              <span className="text-red-500 ml-1">*</span>
+                              <span className="text-destructive ml-1">*</span>
                             )}
                           </Label>
                           {prop.nullable ? (
@@ -392,7 +392,7 @@ const ToolsTab = ({
                               />
                               <label
                                 htmlFor={key}
-                                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                                className="text-sm font-medium text-foreground"
                               >
                                 null
                               </label>
@@ -419,7 +419,7 @@ const ToolsTab = ({
                               />
                               <label
                                 htmlFor={key}
-                                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                                className="text-sm font-medium text-foreground"
                               >
                                 {prop.description || "Toggle this option"}
                               </label>
@@ -653,7 +653,7 @@ const ToolsTab = ({
                                 className={cn(
                                   "h-8 flex-1",
                                   validationMessage &&
-                                    "border-red-500 focus-visible:ring-red-500 focus-visible:ring-1",
+                                    "border-destructive focus-visible:ring-destructive focus-visible:ring-1",
                                 )}
                                 aria-invalid={Boolean(validationMessage)}
                               />
@@ -693,7 +693,7 @@ const ToolsTab = ({
                               </Button>
                             </div>
                             {validationMessage && (
-                              <p className="text-xs text-red-600 dark:text-red-400">
+                              <p className="text-xs text-destructive">
                                 {validationMessage}
                               </p>
                             )}
@@ -705,14 +705,14 @@ const ToolsTab = ({
                   {(hasReservedMetadataEntry ||
                     hasInvalidMetaPrefixEntry ||
                     hasInvalidMetaNameEntry) && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
+                    <p className="text-xs text-destructive">
                       Remove reserved or invalid metadata keys (prefix/name)
                       before running the tool.
                     </p>
                   )}
                 </div>
                 {selectedTool.outputSchema && (
-                  <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+                  <div className="bg-secondary p-3 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-sm font-semibold">Output Schema:</h4>
                       <Button
@@ -750,7 +750,7 @@ const ToolsTab = ({
                 {selectedTool &&
                   hasMeta(selectedTool) &&
                   selectedTool._meta && (
-                    <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+                    <div className="bg-secondary p-3 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="text-sm font-semibold">Meta:</h4>
                         <Button
@@ -797,7 +797,7 @@ const ToolsTab = ({
                     />
                     <Label
                       htmlFor="run-as-task"
-                      className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
+                      className="text-sm font-medium text-foreground cursor-pointer"
                     >
                       Run as task
                     </Label>
@@ -873,7 +873,7 @@ const ToolsTab = ({
                     }}
                   >
                     {copied ? (
-                      <CheckCheck className="h-4 w-4 mr-2 dark:text-green-700 text-green-600" />
+                      <CheckCheck className="h-4 w-4 mr-2 text-foreground" />
                     ) : (
                       <Copy className="h-4 w-4 mr-2" />
                     )}

@@ -38,9 +38,7 @@ const JsonEditor = ({
     <div className="relative">
       <div
         className={`border rounded-md ${
-          displayError
-            ? "border-red-500"
-            : "border-gray-200 dark:border-gray-800"
+          displayError ? "border-destructive" : "border-border"
         }`}
       >
         <Editor
@@ -52,7 +50,7 @@ const JsonEditor = ({
           padding={10}
           placeholder={placeholder}
           style={{
-            fontFamily: '"Fira code", "Fira Mono", monospace',
+            fontFamily: "'Geist Mono', monospace",
             fontSize: 14,
             backgroundColor: "transparent",
             minHeight: "100px",
@@ -61,7 +59,7 @@ const JsonEditor = ({
         />
       </div>
       {displayError && (
-        <p className="text-sm text-red-500 mt-1">{displayError}</p>
+        <p className="text-sm text-destructive mt-1">{displayError}</p>
       )}
     </div>
   );

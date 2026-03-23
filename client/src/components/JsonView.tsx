@@ -64,7 +64,7 @@ const JsonView = memo(
             onClick={handleCopy}
           >
             {copied ? (
-              <CheckCheck className="size-4 dark:text-green-700 text-green-600" />
+              <CheckCheck className="size-4 text-foreground" />
             ) : (
               <Copy className="size-4 text-foreground" />
             )}
@@ -105,13 +105,13 @@ const JsonNode = memo(
     const { toast } = useToast();
     const [isExpanded, setIsExpanded] = useState(depth < initialExpandDepth);
     const [typeStyleMap] = useState<Record<string, string>>({
-      number: "text-blue-600",
-      boolean: "text-amber-600",
-      null: "text-purple-600",
-      undefined: "text-gray-600",
-      string: "text-green-600 group-hover:text-green-500",
-      error: "text-red-600 group-hover:text-red-500",
-      default: "text-gray-700",
+      number: "text-[#d2a6ff]",
+      boolean: "text-[#d2a6ff]",
+      null: "text-[#d2a6ff]",
+      undefined: "text-muted-foreground",
+      string: "text-[#aad94c]",
+      error: "text-destructive",
+      default: "text-[#bfbdb6]",
     });
     const dataType = getDataType(data);
 
@@ -178,12 +178,8 @@ const JsonNode = memo(
       if (isEmpty) {
         return (
           <div className="flex items-center">
-            {name && (
-              <span className="mr-1 text-gray-600 dark:text-gray-400">
-                {name}:
-              </span>
-            )}
-            <span className="text-gray-500">{symbolMap.empty}</span>
+            {name && <span className="mr-1 text-[#ffb454]">{name}:</span>}
+            <span className="text-[#bfbdb6]">{symbolMap.empty}</span>
           </div>
         );
       }
@@ -191,24 +187,24 @@ const JsonNode = memo(
       return (
         <div className="flex flex-col">
           <div
-            className="flex items-center mr-1 rounded cursor-pointer group hover:bg-gray-800/10 dark:hover:bg-gray-800/20"
+            className="flex items-center mr-1 rounded cursor-pointer group hover:bg-white/5"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {name && (
-              <span className="mr-1 text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-100 group-hover:text-gray-400">
+              <span className="mr-1 text-[#ffb454] group-hover:text-[#ffb454]/80">
                 {name}:
               </span>
             )}
             {isExpanded ? (
-              <span className="text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-100 group-hover:text-gray-400">
+              <span className="text-[#ffb454] group-hover:text-[#ffb454]/80">
                 {symbolMap.open}
               </span>
             ) : (
               <>
-                <span className="text-gray-600 dark:group-hover:text-gray-100 group-hover:text-gray-400">
+                <span className="text-[#ffb454] group-hover:text-[#ffb454]/80">
                   {symbolMap.collapsed}
                 </span>
-                <span className="ml-1 text-gray-700 dark:group-hover:text-gray-100 group-hover:text-gray-400">
+                <span className="ml-1 text-[#bfbdb6] group-hover:text-[#bfbdb6]/80">
                   {itemCount} {itemCount === 1 ? "item" : "items"}
                 </span>
               </>
@@ -216,7 +212,7 @@ const JsonNode = memo(
           </div>
           {isExpanded && (
             <>
-              <div className="pl-2 ml-4 border-l border-gray-200 dark:border-gray-800">
+              <div className="pl-2 ml-4 border-l border-border">
                 {isArray
                   ? (items as JsonValue[]).map((item, index) => (
                       <div key={index} className="my-1">
@@ -239,9 +235,7 @@ const JsonNode = memo(
                       </div>
                     ))}
               </div>
-              <div className="text-gray-600 dark:text-gray-400">
-                {symbolMap.close}
-              </div>
+              <div className="text-[#ffb454]">{symbolMap.close}</div>
             </>
           )}
         </div>
@@ -254,12 +248,8 @@ const JsonNode = memo(
 
       if (!isTooLong) {
         return (
-          <div className="flex mr-1 rounded hover:bg-gray-800/20 group items-start">
-            {name && (
-              <span className="mr-1 text-gray-600 dark:text-gray-400">
-                {name}:
-              </span>
-            )}
+          <div className="flex mr-1 rounded hover:bg-white/5 group items-start">
+            {name && <span className="mr-1 text-[#ffb454]">{name}:</span>}
             <pre
               className={clsx(
                 isError ? typeStyleMap.error : typeStyleMap.string,
@@ -279,7 +269,7 @@ const JsonNode = memo(
               title={name ? `Copy value of ${name}` : "Copy value"}
             >
               {copied ? (
-                <CheckCheck className="size-4 dark:text-green-700 text-green-600" />
+                <CheckCheck className="size-4 text-foreground" />
               ) : (
                 <Copy className="size-4 text-foreground" />
               )}
@@ -289,9 +279,9 @@ const JsonNode = memo(
       }
 
       return (
-        <div className="flex mr-1 rounded group hover:bg-gray-800/20 items-start">
+        <div className="flex mr-1 rounded group hover:bg-white/5 items-start">
           {name && (
-            <span className="mr-1 text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-100 group-hover:text-gray-400">
+            <span className="mr-1 text-[#ffb454] group-hover:text-[#ffb454]/80">
               {name}:
             </span>
           )}
@@ -316,7 +306,7 @@ const JsonNode = memo(
             title={name ? `Copy value of ${name}` : "Copy value"}
           >
             {copied ? (
-              <CheckCheck className="size-4 dark:text-green-700 text-green-600" />
+              <CheckCheck className="size-4 text-foreground" />
             ) : (
               <Copy className="size-4 text-foreground" />
             )}
@@ -333,12 +323,8 @@ const JsonNode = memo(
         return renderString(data as string);
       default:
         return (
-          <div className="flex items-center mr-1 rounded hover:bg-gray-800/20 group">
-            {name && (
-              <span className="mr-1 text-gray-600 dark:text-gray-400">
-                {name}:
-              </span>
-            )}
+          <div className="flex items-center mr-1 rounded hover:bg-white/5 group">
+            {name && <span className="mr-1 text-[#ffb454]">{name}:</span>}
             <span className={typeStyleMap[dataType] || typeStyleMap.default}>
               {data === null ? "null" : String(data)}
             </span>
@@ -353,7 +339,7 @@ const JsonNode = memo(
               title={name ? `Copy value of ${name}` : "Copy value"}
             >
               {copied ? (
-                <CheckCheck className="size-4 dark:text-green-700 text-green-600" />
+                <CheckCheck className="size-4 text-foreground" />
               ) : (
                 <Copy className="size-4 text-foreground" />
               )}

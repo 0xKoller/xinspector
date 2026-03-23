@@ -355,7 +355,7 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
             return (
               <div className="space-y-2">
                 {propSchema.description && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {propSchema.description}
                   </p>
                 )}
@@ -370,7 +370,7 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                     }
                   }}
                   required={isRequired}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-secondary"
                 >
                   <option value="">Select an option...</option>
                   {titledOptions.map((option) => (
@@ -394,7 +394,7 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
             return (
               <div className="space-y-2">
                 {propSchema.description && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {propSchema.description}
                   </p>
                 )}
@@ -409,7 +409,7 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                     }
                   }}
                   required={isRequired}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-secondary"
                 >
                   <option value="">Select an option...</option>
                   {propSchema.enum.map((option, idx) => (
@@ -538,7 +538,7 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
           return (
             <div className="space-y-2">
               {propSchema.description && (
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {propSchema.description}
                 </p>
               )}
@@ -581,7 +581,7 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                   <label className="block text-sm font-medium mb-1">
                     {(subSchema as JsonSchemaType).title ?? key}
                     {propSchema.required?.includes(key) && (
-                      <span className="text-red-500 ml-1">*</span>
+                      <span className="text-destructive ml-1">*</span>
                     )}
                   </label>
                   {renderFormFields(
@@ -630,7 +630,7 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
             return (
               <div className="space-y-2">
                 {propSchema.description && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {propSchema.description}
                   </p>
                 )}
@@ -644,7 +644,7 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                     ).map((o) => o.value);
                     handleFieldChange(path, selected);
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-secondary"
                 >
                   {multiOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -653,7 +653,7 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                   ))}
                 </select>
                 {(propSchema.minItems || propSchema.maxItems) && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     {propSchema.minItems
                       ? `Select at least ${propSchema.minItems}. `
                       : ""}
@@ -671,13 +671,13 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
             return (
               <div className="space-y-4">
                 {propSchema.description && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {propSchema.description}
                   </p>
                 )}
 
                 {propSchema.items?.description && (
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     Items: {propSchema.items.description}
                   </p>
                 )}
@@ -836,14 +836,14 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
           rawJsonValue &&
           rawJsonValue !== "{}" ? (
           <div className="space-y-4 border rounded-md p-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Form view not available for this JSON structure. Using simplified
               view:
             </p>
-            <pre className="bg-gray-50 dark:bg-gray-800 dark:text-gray-100 p-4 rounded text-sm overflow-auto">
+            <pre className="bg-secondary text-foreground p-4 rounded text-sm overflow-auto">
               {rawJsonValue}
             </pre>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Use JSON mode for full editing capabilities.
             </p>
           </div>

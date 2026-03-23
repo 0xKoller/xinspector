@@ -77,7 +77,9 @@ const OAuthCallback = ({ onConnect }: OAuthCallbackProps) => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <p className="text-lg text-gray-500">Processing OAuth callback...</p>
+      <p className="text-lg text-muted-foreground">
+        Processing OAuth callback...
+      </p>
     </div>
   );
 };

@@ -135,24 +135,26 @@ const ToolResults = ({
         <h4 className="font-semibold mb-2">
           Tool Result:{" "}
           {isError ? (
-            <span className="text-red-600 font-semibold">Error</span>
+            <span className="text-destructive font-semibold">Error</span>
           ) : isTaskRunning ? (
-            <span className="text-yellow-600 font-semibold">Task Running</span>
+            <span className="text-muted-foreground font-semibold">
+              Task Running
+            </span>
           ) : (
-            <span className="text-green-600 font-semibold">Success</span>
+            <span className="text-foreground font-semibold">Success</span>
           )}
         </h4>
         {structuredResult.structuredContent && (
           <div className="mb-4">
             <h5 className="font-semibold mb-2 text-sm">Structured Content:</h5>
-            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+            <div className="bg-secondary p-3 rounded-lg">
               <JsonView data={structuredResult.structuredContent} />
               {validationResult && (
                 <div
                   className={`mt-2 p-2 rounded text-sm ${
                     validationResult.isValid
-                      ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200"
-                      : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200"
+                      ? "bg-secondary text-foreground"
+                      : "bg-destructive/10 text-destructive"
                   }`}
                 >
                   {validationResult.isValid ? (
@@ -168,7 +170,7 @@ const ToolResults = ({
         {structuredResult._meta && (
           <div className="mb-4">
             <h5 className="font-semibold mb-2 text-sm">Meta:</h5>
-            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
+            <div className="bg-secondary p-3 rounded-lg">
               <JsonView data={structuredResult._meta} />
             </div>
           </div>
@@ -177,7 +179,7 @@ const ToolResults = ({
           validationResult &&
           !validationResult.isValid && (
             <div className="mb-4">
-              <div className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-2 rounded text-sm">
+              <div className="bg-destructive/10 text-destructive p-2 rounded text-sm">
                 ✗ Validation Error: {validationResult.error}
               </div>
             </div>
@@ -190,7 +192,7 @@ const ToolResults = ({
                   Unstructured Content:
                 </h5>
                 {compatibilityResult?.hasMatch && (
-                  <div className="mb-2 p-2 rounded text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                  <div className="mb-2 p-2 rounded text-sm bg-secondary text-foreground">
                     ✓ {compatibilityResult.message}
                   </div>
                 )}

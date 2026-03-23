@@ -19,15 +19,15 @@ import { cn } from "@/lib/utils";
 const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
   switch (status) {
     case "working":
-      return <Clock className="h-4 w-4 animate-pulse text-blue-500" />;
+      return <Clock className="h-4 w-4 animate-pulse text-foreground" />;
     case "input_required":
-      return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      return <AlertTriangle className="h-4 w-4 text-muted-foreground" />;
     case "completed":
-      return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      return <CheckCircle2 className="h-4 w-4 text-foreground" />;
     case "failed":
-      return <XCircle className="h-4 w-4 text-red-500" />;
+      return <XCircle className="h-4 w-4 text-destructive" />;
     case "cancelled":
-      return <XCircle className="h-4 w-4 text-gray-500" />;
+      return <XCircle className="h-4 w-4 text-muted-foreground" />;
     default:
       return <PlayCircle className="h-4 w-4" />;
   }
@@ -143,13 +143,14 @@ const TasksTab = ({
                     <span
                       className={cn(
                         "font-semibold capitalize",
-                        displayedTask.status === "working" && "text-blue-500",
+                        displayedTask.status === "working" && "text-foreground",
                         displayedTask.status === "completed" &&
-                          "text-green-500",
-                        displayedTask.status === "failed" && "text-red-500",
-                        displayedTask.status === "cancelled" && "text-gray-500",
+                          "text-foreground",
+                        displayedTask.status === "failed" && "text-destructive",
+                        displayedTask.status === "cancelled" &&
+                          "text-muted-foreground",
                         displayedTask.status === "input_required" &&
-                          "text-yellow-500",
+                          "text-muted-foreground",
                       )}
                     >
                       {displayedTask.status.replace("_", " ")}

@@ -44,9 +44,7 @@ const HistoryAndNotifications = ({
           </Button>
         </div>
         {requestHistory.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-            No history yet
-          </p>
+          <p className="text-sm text-muted-foreground italic">No history yet</p>
         ) : (
           <ul className="space-y-3">
             {requestHistory
@@ -77,7 +75,7 @@ const HistoryAndNotifications = ({
                     <>
                       <div className="mt-2">
                         <div className="flex justify-between items-center mb-1">
-                          <span className="font-semibold text-blue-600">
+                          <span className="font-semibold text-foreground">
                             Request:
                           </span>
                         </div>
@@ -90,7 +88,7 @@ const HistoryAndNotifications = ({
                       {request.response && (
                         <div className="mt-2">
                           <div className="flex justify-between items-center mb-1">
-                            <span className="font-semibold text-green-600">
+                            <span className="font-semibold text-foreground">
                               Response:
                             </span>
                           </div>
@@ -120,7 +118,7 @@ const HistoryAndNotifications = ({
           </Button>
         </div>
         {serverNotifications.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+          <p className="text-sm text-muted-foreground italic">
             No notifications yet
           </p>
         ) : (
@@ -158,7 +156,7 @@ const HistoryAndNotifications = ({
                   ] && (
                     <div className="mt-2">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="font-semibold text-purple-600">
+                        <span className="font-semibold text-foreground">
                           Details:
                         </span>
                       </div>

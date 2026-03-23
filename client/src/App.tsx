@@ -1456,7 +1456,7 @@ const App = () => {
                 !serverCapabilities?.tools ? (
                   <>
                     <div className="flex items-center justify-center p-4">
-                      <p className="text-lg text-gray-500 dark:text-gray-400">
+                      <p className="text-lg text-muted-foreground">
                         The connected server does not support any MCP
                         capabilities
                       </p>
@@ -1698,7 +1698,7 @@ const App = () => {
             </Tabs>
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-4">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
+              <p className="text-lg text-muted-foreground">
                 Connect to an MCP server to start inspecting
               </p>
               <div className="flex items-center gap-2">
@@ -1723,7 +1723,7 @@ const App = () => {
           }}
         >
           <div
-            className="absolute w-full h-4 -top-2 cursor-row-resize flex items-center justify-center hover:bg-accent/50 dark:hover:bg-input/40"
+            className="absolute w-full h-4 -top-2 cursor-row-resize flex items-center justify-center hover:bg-accent/50 hover:bg-input/40"
             onMouseDown={handleDragStart}
           >
             <div className="w-8 h-1 rounded-full bg-border" />

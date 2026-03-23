@@ -134,7 +134,7 @@ const SamplingRequest = ({
       data-testid="sampling-request"
       className="flex gap-4 p-4 border rounded-lg space-y-4"
     >
-      <div className="flex-1 bg-gray-50 dark:bg-gray-800 dark:text-gray-100 p-2 rounded">
+      <div className="flex-1 bg-secondary text-foreground p-2 rounded">
         <JsonView data={JSON.stringify(request.request)} />
       </div>
       <form className="flex-1 space-y-4">

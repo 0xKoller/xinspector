@@ -57,9 +57,9 @@ const ListPane = <T extends object>({
 
   return (
     <div className="bg-card border border-border rounded-lg shadow">
-      <div className="p-4 border-b border-gray-200 dark:border-border">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between gap-4">
-          <h3 className="font-semibold dark:text-white flex-shrink-0">
+          <h3 className="font-semibold text-foreground flex-shrink-0">
             {title}
           </h3>
           <div className="flex items-center justify-end min-w-0 flex-1">
@@ -68,7 +68,7 @@ const ListPane = <T extends object>({
                 name="search"
                 aria-label="Search"
                 onClick={handleSearchClick}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-secondary rounded-md transition-all duration-300 ease-in-out"
+                className="p-2 hover:bg-accent rounded-md transition-all duration-300 ease-in-out"
               >
                 <Search className="w-4 h-4 text-muted-foreground" />
               </button>
@@ -115,7 +115,7 @@ const ListPane = <T extends object>({
           {filteredItems.map((item, index) => (
             <div
               key={index}
-              className="flex items-center py-2 px-4 rounded hover:bg-gray-50 dark:hover:bg-secondary cursor-pointer"
+              className="flex items-center py-2 px-4 rounded hover:bg-accent cursor-pointer"
               onClick={() => setSelectedItem(item)}
             >
               {renderItem(item)}

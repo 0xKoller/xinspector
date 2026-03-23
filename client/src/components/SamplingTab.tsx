@@ -39,7 +39,7 @@ const SamplingTab = ({ pendingRequests, onApprove, onReject }: Props) => {
             />
           ))}
           {pendingRequests.length === 0 && (
-            <p className="text-gray-500">No pending requests</p>
+            <p className="text-muted-foreground">No pending requests</p>
           )}
         </div>
       </div>

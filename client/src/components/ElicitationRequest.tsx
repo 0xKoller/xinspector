@@ -117,7 +117,7 @@ const ElicitationRequest = ({
       data-testid="elicitation-request"
       className="flex gap-4 p-4 border rounded-lg space-y-4"
     >
-      <div className="flex-1 bg-gray-50 dark:bg-gray-800 dark:text-gray-100 p-2 rounded">
+      <div className="flex-1 bg-secondary text-foreground p-2 rounded">
         <div className="space-y-2">
           <h4 className="font-semibold">{schemaTitle}</h4>
           <p className="text-sm">{request.request.message}</p>
@@ -146,8 +146,8 @@ const ElicitationRequest = ({
           />
 
           {validationError && (
-            <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-              <div className="text-sm text-red-600 dark:text-red-400">
+            <div className="mt-4 p-3 bg-destructive/10 border border-destructive/30 rounded-md">
+              <div className="text-sm text-destructive">
                 <strong>Validation Error:</strong> {validationError}
               </div>
             </div>

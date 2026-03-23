@@ -31,7 +31,6 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { InspectorConfig } from "@/lib/configurationTypes";
 import { ConnectionStatus } from "@/lib/constants";
-import useTheme from "../lib/hooks/useTheme";
 import { version } from "../../../package.json";
 import {
   Tooltip,
@@ -119,7 +118,6 @@ const Sidebar = ({
   setConnectionType,
   serverImplementation,
 }: SidebarProps) => {
-  const [theme, setTheme] = useTheme();
   const [showEnvVars, setShowEnvVars] = useState(false);
   const [showAuthConfig, setShowAuthConfig] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
@@ -248,7 +246,7 @@ const Sidebar = ({
 
   return (
     <div className="bg-card border-r border-border flex flex-col h-full">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-border">
+      <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center">
           <h1 className="ml-2 text-lg font-semibold">
             MCP Inspector v{version}
@@ -653,7 +651,7 @@ const Sidebar = ({
               {showX402 && (
                 <div className="space-y-3 p-3 rounded border">
                   {connectionType === "direct" ? (
-                    <p className="text-xs text-amber-600">
+                    <p className="text-xs text-muted-foreground">
                       x402 requires proxy connection mode.
                     </p>
                   ) : (
@@ -734,7 +732,7 @@ const Sidebar = ({
                     <div key={key} className="space-y-2">
                       <div className="flex items-center gap-1">
                         <label
-                          className="text-sm font-medium text-green-600 break-all"
+                          className="text-sm font-medium text-foreground break-all"
                           htmlFor={`${configKey}-input`}
                         >
                           {configItem.label}
@@ -845,11 +843,11 @@ const Sidebar = ({
                     case "error-connecting-to-proxy":
                       return "bg-red-500";
                     default:
-                      return "bg-gray-500";
+                      return "bg-muted-foreground";
                   }
                 })()}`}
               />
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm text-muted-foreground">
                 {(() => {
                   switch (connectionStatus) {
                     case "connected":
@@ -871,7 +869,7 @@ const Sidebar = ({
             </div>
 
             {connectionStatus === "connected" && serverImplementation && (
-              <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg mb-4">
+              <div className="bg-secondary p-3 rounded-lg mb-4">
                 <div className="flex items-center gap-2 mb-1">
                   {(serverImplementation as WithIcons).icons &&
                   (serverImplementation as WithIcons).icons!.length > 0 ? (
@@ -880,7 +878,7 @@ const Sidebar = ({
                       size="sm"
                     />
                   ) : (
-                    <Server className="w-4 h-4 text-gray-500" />
+                    <Server className="w-4 h-4 text-muted-foreground" />
                   )}
                   {(serverImplementation as { websiteUrl?: string })
                     .websiteUrl ? (
@@ -891,18 +889,18 @@ const Sidebar = ({
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
+                      className="text-sm font-medium text-foreground hover:text-white hover:underline transition-colors"
                     >
                       {serverImplementation.name || "MCP Server"}
                     </a>
                   ) : (
-                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                    <span className="text-sm font-medium text-foreground">
                       {serverImplementation.name || "MCP Server"}
                     </span>
                   )}
                 </div>
                 {serverImplementation.version && (
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                  <div className="text-xs text-muted-foreground">
                     Version: {serverImplementation.version}
                   </div>
                 )}
@@ -940,23 +938,7 @@ const Sidebar = ({
         </div>
       </div>
       <div className="p-4 border-t">
-        <div className="flex items-center justify-between">
-          <Select
-            value={theme}
-            onValueChange={(value: string) =>
-              setTheme(value as "system" | "light" | "dark")
-            }
-          >
-            <SelectTrigger className="w-[100px]" id="theme-select">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="system">System</SelectItem>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-            </SelectContent>
-          </Select>
-
+        <div className="flex items-center justify-end">
           <div className="flex items-center space-x-2">
             <Button variant="ghost" title="Inspector Documentation" asChild>
               <a

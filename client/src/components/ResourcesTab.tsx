@@ -132,12 +132,12 @@ const ResourcesTab = ({
             <div className="flex items-center w-full">
               <IconDisplay icons={(resource as WithIcons).icons} size="sm" />
               {!(resource as WithIcons).icons && (
-                <FileText className="w-4 h-4 mr-2 flex-shrink-0 text-gray-500" />
+                <FileText className="w-4 h-4 mr-2 flex-shrink-0 text-muted-foreground" />
               )}
               <span className="flex-1 truncate" title={resource.uri.toString()}>
                 {resource.name}
               </span>
-              <ChevronRight className="w-4 h-4 flex-shrink-0 text-gray-400" />
+              <ChevronRight className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
             </div>
           )}
           title="Resources"
@@ -165,12 +165,12 @@ const ResourcesTab = ({
             <div className="flex items-center w-full">
               <IconDisplay icons={(template as WithIcons).icons} size="sm" />
               {!(template as WithIcons).icons && (
-                <FileText className="w-4 h-4 mr-2 flex-shrink-0 text-gray-500" />
+                <FileText className="w-4 h-4 mr-2 flex-shrink-0 text-muted-foreground" />
               )}
               <span className="flex-1 truncate" title={template.uriTemplate}>
                 {template.name}
               </span>
-              <ChevronRight className="w-4 h-4 flex-shrink-0 text-gray-400" />
+              <ChevronRight className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
             </div>
           )}
           title="Resource Templates"
@@ -181,7 +181,7 @@ const ResourcesTab = ({
         />
 
         <div className="bg-card border border-border rounded-lg shadow">
-          <div className="p-4 border-b border-gray-200 dark:border-border flex justify-between items-center">
+          <div className="p-4 border-b border-border flex justify-between items-center">
             <div className="flex items-center gap-2 truncate">
               {(selectedResource || selectedTemplate) && (
                 <IconDisplay
@@ -249,11 +249,11 @@ const ResourcesTab = ({
             ) : selectedResource ? (
               <JsonView
                 data={resourceContent}
-                className="bg-gray-50 dark:bg-gray-800 p-4 rounded text-sm overflow-auto max-h-96 text-gray-900 dark:text-gray-100"
+                className="bg-secondary p-4 rounded text-sm overflow-auto max-h-96 text-foreground"
               />
             ) : selectedTemplate ? (
               <div className="space-y-4">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-muted-foreground">
                   {selectedTemplate.description}
                 </p>
                 {new UriTemplate(

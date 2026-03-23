@@ -76,7 +76,7 @@ const MetadataTab: React.FC<MetadataTabProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold">Metadata</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground">
               Key-value pairs that will be included in all MCP requests
             </p>
           </div>
@@ -119,7 +119,7 @@ const MetadataTab: React.FC<MetadataTabProps> = ({
                       aria-invalid={Boolean(validationMessage)}
                       className={cn(
                         validationMessage &&
-                          "border-red-500 focus-visible:ring-red-500 focus-visible:ring-1",
+                          "border-destructive focus-visible:ring-destructive focus-visible:ring-1",
                       )}
                     />
                   </div>
@@ -146,7 +146,7 @@ const MetadataTab: React.FC<MetadataTabProps> = ({
                   </Button>
                 </div>
                 {validationMessage && (
-                  <p className="text-xs text-red-600 dark:text-red-400">
+                  <p className="text-xs text-destructive">
                     {validationMessage}
                   </p>
                 )}
@@ -157,7 +157,7 @@ const MetadataTab: React.FC<MetadataTabProps> = ({
 
         {entries.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-muted-foreground mb-4">
               No metadata entries. Click "Add Entry" to add key-value pairs.
             </p>
           </div>

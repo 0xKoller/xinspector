@@ -5,12 +5,29 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["'Geist'", "system-ui", "sans-serif"],
+        mono: ["'Geist Mono'", "monospace"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        brand: {
+          white: "var(--brand-white)",
+          black: "var(--brand-black)",
+          neutral: {
+            50: "var(--brand-neutral-50)",
+            100: "var(--brand-neutral-100)",
+            200: "var(--brand-neutral-200)",
+            300: "var(--brand-neutral-300)",
+            400: "var(--brand-neutral-400)",
+            500: "var(--brand-neutral-500)",
+            600: "var(--brand-neutral-600)",
+          },
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
