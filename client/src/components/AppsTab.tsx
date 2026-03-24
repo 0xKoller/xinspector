@@ -448,12 +448,9 @@ const AppsTab = ({
                                           })
                                         }
                                       />
-                                      <label
-                                        htmlFor={`${key}-null`}
-                                        className="text-sm font-medium text-foreground"
-                                      >
+                                      <Label htmlFor={`${key}-null`}>
                                         null
-                                      </label>
+                                      </Label>
                                     </div>
                                   ) : null}
                                 </div>
@@ -473,13 +470,10 @@ const AppsTab = ({
                                           })
                                         }
                                       />
-                                      <label
-                                        htmlFor={key}
-                                        className="text-sm font-medium text-foreground"
-                                      >
+                                      <Label htmlFor={key}>
                                         {prop.description ||
                                           "Toggle this option"}
-                                      </label>
+                                      </Label>
                                     </div>
                                   ) : prop.type === "string" && prop.enum ? (
                                     <Select

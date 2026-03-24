@@ -38,6 +38,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import CustomHeaders from "./CustomHeaders";
 import { CustomHeaders as CustomHeadersType } from "@/lib/types/customHeaders";
 import { useToast } from "../lib/hooks/useToast";
@@ -257,12 +258,7 @@ const Sidebar = ({
       <div className="p-4 flex-1 overflow-auto">
         <div className="space-y-4">
           <div className="space-y-2">
-            <label
-              className="text-sm font-medium"
-              htmlFor="transport-type-select"
-            >
-              Transport Type
-            </label>
+            <Label htmlFor="transport-type-select">Transport Type</Label>
             <Select
               value={transportType}
               onValueChange={(value: "stdio" | "sse" | "streamable-http") =>
@@ -283,9 +279,7 @@ const Sidebar = ({
           {transportType === "stdio" ? (
             <>
               <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="command-input">
-                  Command
-                </label>
+                <Label htmlFor="command-input">Command</Label>
                 <Input
                   id="command-input"
                   placeholder="Command"
@@ -296,12 +290,7 @@ const Sidebar = ({
                 />
               </div>
               <div className="space-y-2">
-                <label
-                  className="text-sm font-medium"
-                  htmlFor="arguments-input"
-                >
-                  Arguments
-                </label>
+                <Label htmlFor="arguments-input">Arguments</Label>
                 <Input
                   id="arguments-input"
                   placeholder="Arguments (space-separated)"
@@ -314,9 +303,7 @@ const Sidebar = ({
           ) : (
             <>
               <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="sse-url-input">
-                  URL
-                </label>
+                <Label htmlFor="sse-url-input">URL</Label>
                 {sseUrl ? (
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -345,12 +332,9 @@ const Sidebar = ({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="space-y-2">
-                    <label
-                      className="text-sm font-medium"
-                      htmlFor="connection-type-select"
-                    >
+                    <Label htmlFor="connection-type-select">
                       Connection Type
-                    </label>
+                    </Label>
                     <Select
                       value={connectionType}
                       onValueChange={(value: "direct" | "proxy") =>
@@ -448,35 +432,46 @@ const Sidebar = ({
                           }}
                           className="font-mono"
                         />
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-9 w-9 p-0 shrink-0"
-                          onClick={() => {
-                            setShownEnvVars((prev) => {
-                              const next = new Set(prev);
-                              if (next.has(key)) {
-                                next.delete(key);
-                              } else {
-                                next.add(key);
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-9 w-9 p-0 shrink-0"
+                              onClick={() => {
+                                setShownEnvVars((prev) => {
+                                  const next = new Set(prev);
+                                  if (next.has(key)) {
+                                    next.delete(key);
+                                  } else {
+                                    next.add(key);
+                                  }
+                                  return next;
+                                });
+                              }}
+                              aria-label={
+                                shownEnvVars.has(key)
+                                  ? "Hide value"
+                                  : "Show value"
                               }
-                              return next;
-                            });
-                          }}
-                          aria-label={
-                            shownEnvVars.has(key) ? "Hide value" : "Show value"
-                          }
-                          aria-pressed={shownEnvVars.has(key)}
-                          title={
-                            shownEnvVars.has(key) ? "Hide value" : "Show value"
-                          }
-                        >
-                          {shownEnvVars.has(key) ? (
-                            <Eye className="h-4 w-4" aria-hidden="true" />
-                          ) : (
-                            <EyeOff className="h-4 w-4" aria-hidden="true" />
-                          )}
-                        </Button>
+                              aria-pressed={shownEnvVars.has(key)}
+                            >
+                              {shownEnvVars.has(key) ? (
+                                <Eye className="h-4 w-4" aria-hidden="true" />
+                              ) : (
+                                <EyeOff
+                                  className="h-4 w-4"
+                                  aria-hidden="true"
+                                />
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {shownEnvVars.has(key)
+                              ? "Hide value"
+                              : "Show value"}
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
                     </div>
                   ))}
@@ -568,7 +563,7 @@ const Sidebar = ({
                       OAuth 2.0 Flow
                     </h4>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Client ID</label>
+                      <Label>Client ID</Label>
                       <Input
                         placeholder="Client ID"
                         onChange={(e) => setOauthClientId(e.target.value)}
@@ -576,9 +571,7 @@ const Sidebar = ({
                         data-testid="oauth-client-id-input"
                         className="font-mono"
                       />
-                      <label className="text-sm font-medium">
-                        Client Secret
-                      </label>
+                      <Label>Client Secret</Label>
                       <div className="flex gap-2">
                         <Input
                           type={showClientSecret ? "text" : "password"}
@@ -588,36 +581,43 @@ const Sidebar = ({
                           data-testid="oauth-client-secret-input"
                           className="font-mono"
                         />
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-9 w-9 p-0 shrink-0"
-                          onClick={() => setShowClientSecret(!showClientSecret)}
-                          aria-label={
-                            showClientSecret ? "Hide secret" : "Show secret"
-                          }
-                          aria-pressed={showClientSecret}
-                          title={
-                            showClientSecret ? "Hide secret" : "Show secret"
-                          }
-                        >
-                          {showClientSecret ? (
-                            <Eye className="h-4 w-4" aria-hidden="true" />
-                          ) : (
-                            <EyeOff className="h-4 w-4" aria-hidden="true" />
-                          )}
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-9 w-9 p-0 shrink-0"
+                              onClick={() =>
+                                setShowClientSecret(!showClientSecret)
+                              }
+                              aria-label={
+                                showClientSecret ? "Hide secret" : "Show secret"
+                              }
+                              aria-pressed={showClientSecret}
+                            >
+                              {showClientSecret ? (
+                                <Eye className="h-4 w-4" aria-hidden="true" />
+                              ) : (
+                                <EyeOff
+                                  className="h-4 w-4"
+                                  aria-hidden="true"
+                                />
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {showClientSecret ? "Hide secret" : "Show secret"}
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
-                      <label className="text-sm font-medium">
-                        Redirect URL
-                      </label>
+                      <Label>Redirect URL</Label>
                       <Input
                         readOnly
                         placeholder="Redirect URL"
                         value={window.location.origin + "/oauth/callback"}
                         className="font-mono"
                       />
-                      <label className="text-sm font-medium">Scope</label>
+                      <Label>Scope</Label>
                       <Input
                         placeholder="Scope (space-separated)"
                         onChange={(e) => setOauthScope(e.target.value)}
@@ -657,9 +657,7 @@ const Sidebar = ({
                   ) : (
                     <>
                       <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium">
-                          Enable x402
-                        </label>
+                        <Label>Enable x402</Label>
                         <Switch
                           checked={x402Enabled}
                           onCheckedChange={setX402Enabled}
@@ -668,9 +666,7 @@ const Sidebar = ({
                       </div>
                       {x402Enabled && (
                         <div className="space-y-2">
-                          <label className="text-sm font-medium">
-                            EVM Private Key
-                          </label>
+                          <Label>EVM Private Key</Label>
                           <div className="flex gap-2">
                             <Input
                               type={showPrivateKey ? "text" : "password"}
@@ -731,12 +727,12 @@ const Sidebar = ({
                   return (
                     <div key={key} className="space-y-2">
                       <div className="flex items-center gap-1">
-                        <label
-                          className="text-sm font-medium text-foreground break-all"
+                        <Label
+                          className="text-foreground break-all"
                           htmlFor={`${configKey}-input`}
                         >
                           {configItem.label}
-                        </label>
+                        </Label>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <HelpCircle className="h-4 w-4 text-muted-foreground" />
@@ -909,12 +905,7 @@ const Sidebar = ({
 
             {loggingSupported && connectionStatus === "connected" && (
               <div className="space-y-2">
-                <label
-                  className="text-sm font-medium"
-                  htmlFor="logging-level-select"
-                >
-                  Logging Level
-                </label>
+                <Label htmlFor="logging-level-select">Logging Level</Label>
                 <Select
                   value={logLevel}
                   onValueChange={(value: LoggingLevel) =>
@@ -940,37 +931,50 @@ const Sidebar = ({
       <div className="p-4 border-t">
         <div className="flex items-center justify-end">
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" title="Inspector Documentation" asChild>
-              <a
-                href="https://modelcontextprotocol.io/docs/tools/inspector"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <CircleHelp className="w-4 h-4 text-foreground" />
-              </a>
-            </Button>
-            <Button variant="ghost" title="Debugging Guide" asChild>
-              <a
-                href="https://modelcontextprotocol.io/docs/tools/debugging"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Bug className="w-4 h-4 text-foreground" />
-              </a>
-            </Button>
-            <Button
-              variant="ghost"
-              title="Report bugs or contribute on GitHub"
-              asChild
-            >
-              <a
-                href="https://github.com/modelcontextprotocol/inspector"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Github className="w-4 h-4 text-foreground" />
-              </a>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" asChild>
+                  <a
+                    href="https://modelcontextprotocol.io/docs/tools/inspector"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <CircleHelp className="w-4 h-4 text-foreground" />
+                  </a>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Inspector Documentation</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" asChild>
+                  <a
+                    href="https://modelcontextprotocol.io/docs/tools/debugging"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Bug className="w-4 h-4 text-foreground" />
+                  </a>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Debugging Guide</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" asChild>
+                  <a
+                    href="https://github.com/modelcontextprotocol/inspector"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Github className="w-4 h-4 text-foreground" />
+                  </a>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Report bugs or contribute on GitHub
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>

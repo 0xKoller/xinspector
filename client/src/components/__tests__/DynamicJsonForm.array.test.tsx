@@ -282,8 +282,8 @@ describe("DynamicJsonForm Array Fields", () => {
 
       const checkboxes = screen.getAllByRole("checkbox");
       expect(checkboxes).toHaveLength(2);
-      expect(checkboxes[0]).toHaveProperty("checked", true);
-      expect(checkboxes[1]).toHaveProperty("checked", false);
+      expect(checkboxes[0]).toHaveAttribute("data-state", "checked");
+      expect(checkboxes[1]).toHaveAttribute("data-state", "unchecked");
 
       // Test adding new boolean item
       const addButton = screen.getByText("Add Item");

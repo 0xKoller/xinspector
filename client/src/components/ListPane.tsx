@@ -64,14 +64,16 @@ const ListPane = <T extends object>({
           </h3>
           <div className="flex items-center justify-end min-w-0 flex-1">
             {!isSearchExpanded ? (
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 name="search"
                 aria-label="Search"
                 onClick={handleSearchClick}
-                className="p-2 hover:bg-accent rounded-md transition-all duration-300 ease-in-out"
+                className="h-auto w-auto p-2"
               >
                 <Search className="w-4 h-4 text-muted-foreground" />
-              </button>
+              </Button>
             ) : (
               <div className="flex items-center w-full max-w-xs">
                 <div className="relative w-full">

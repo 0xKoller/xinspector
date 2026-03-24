@@ -7,7 +7,16 @@ import {
   useImperativeHandle,
 } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import JsonEditor from "./JsonEditor";
 import { updateValueAtPath } from "@/utils/jsonUtils";
 import { generateDefaultValue } from "@/utils/schemaUtils";
@@ -359,10 +368,9 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                     {propSchema.description}
                   </p>
                 )}
-                <select
-                  value={(currentValue as string) ?? ""}
-                  onChange={(e) => {
-                    const val = e.target.value;
+                <Select
+                  value={(currentValue as string) || undefined}
+                  onValueChange={(val) => {
                     if (!val && !isRequired) {
                       handleFieldChange(path, undefined);
                     } else {
@@ -370,18 +378,21 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                     }
                   }}
                   required={isRequired}
-                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-secondary"
                 >
-                  <option value="">Select an option...</option>
-                  {titledOptions.map((option) => (
-                    <option
-                      key={String(option.const)}
-                      value={String(option.const)}
-                    >
-                      {option.title ?? String(option.const)}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full bg-secondary">
+                    <SelectValue placeholder="Select an option..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {titledOptions.map((option) => (
+                      <SelectItem
+                        key={String(option.const)}
+                        value={String(option.const)}
+                      >
+                        {option.title ?? String(option.const)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             );
           }
@@ -398,10 +409,9 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                     {propSchema.description}
                   </p>
                 )}
-                <select
-                  value={(currentValue as string) ?? ""}
-                  onChange={(e) => {
-                    const val = e.target.value;
+                <Select
+                  value={(currentValue as string) || undefined}
+                  onValueChange={(val) => {
                     if (!val && !isRequired) {
                       handleFieldChange(path, undefined);
                     } else {
@@ -409,15 +419,18 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                     }
                   }}
                   required={isRequired}
-                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-secondary"
                 >
-                  <option value="">Select an option...</option>
-                  {propSchema.enum.map((option, idx) => (
-                    <option key={option} value={option}>
-                      {names?.[idx] ?? option}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full bg-secondary">
+                    <SelectValue placeholder="Select an option..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {propSchema.enum.map((option, idx) => (
+                      <SelectItem key={String(option)} value={String(option)}>
+                        {names?.[idx] ?? String(option)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             );
           }
@@ -542,11 +555,11 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
                   {propSchema.description}
                 </p>
               )}
-              <Input
-                type="checkbox"
+              <Checkbox
                 checked={(currentValue as boolean) ?? false}
-                onChange={(e) => handleFieldChange(path, e.target.checked)}
-                className="w-4 h-4"
+                onCheckedChange={(checked) =>
+                  handleFieldChange(path, checked === true)
+                }
                 required={isRequired}
               />
             </div>
@@ -578,12 +591,12 @@ const DynamicJsonForm = forwardRef<DynamicJsonFormRef, DynamicJsonFormProps>(
             <div className="space-y-2 border rounded p-3">
               {Object.entries(propSchema.properties).map(([key, subSchema]) => (
                 <div key={key}>
-                  <label className="block text-sm font-medium mb-1">
+                  <Label className="block mb-1">
                     {(subSchema as JsonSchemaType).title ?? key}
                     {propSchema.required?.includes(key) && (
                       <span className="text-destructive ml-1">*</span>
                     )}
-                  </label>
+                  </Label>
                   {renderFormFields(
                     subSchema as JsonSchemaType,
                     (currentValue as Record<string, JsonValue>)?.[key],

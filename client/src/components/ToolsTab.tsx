@@ -390,12 +390,7 @@ const ToolsTab = ({
                                   })
                                 }
                               />
-                              <label
-                                htmlFor={key}
-                                className="text-sm font-medium text-foreground"
-                              >
-                                null
-                              </label>
+                              <Label htmlFor={key}>null</Label>
                             </div>
                           ) : null}
                         </div>
@@ -417,12 +412,9 @@ const ToolsTab = ({
                                   })
                                 }
                               />
-                              <label
-                                htmlFor={key}
-                                className="text-sm font-medium text-foreground"
-                              >
+                              <Label htmlFor={key}>
                                 {prop.description || "Toggle this option"}
-                              </label>
+                              </Label>
                             </div>
                           ) : prop.type === "string" && prop.enum ? (
                             <Select

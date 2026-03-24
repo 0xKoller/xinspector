@@ -1,6 +1,8 @@
 import { AuthDebuggerState, OAuthStep } from "@/lib/auth-types";
 import { CheckCircle2, Circle, ExternalLink } from "lucide-react";
 import { Button } from "./ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { DebugInspectorOAuthClientProvider } from "@/lib/auth";
 import { useEffect, useMemo, useState } from "react";
 import { OAuthClientInformation } from "@modelcontextprotocol/sdk/shared/auth.js";
@@ -244,7 +246,9 @@ export const OAuthFlowProgress = ({
                 <p className="text-xs break-all">
                   {String(authState.authorizationUrl)}
                 </p>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => {
                     try {
                       validateRedirectUrl(authState.authorizationUrl!);
@@ -264,12 +268,11 @@ export const OAuthFlowProgress = ({
                       });
                     }
                   }}
-                  className="flex items-center text-foreground hover:text-white"
+                  className="h-auto p-0 text-foreground hover:text-white hover:bg-transparent"
                   aria-label="Open authorization URL in new tab"
-                  title="Open authorization URL"
                 >
                   <ExternalLink className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 Click the link to authorize in your browser. After
@@ -284,14 +287,11 @@ export const OAuthFlowProgress = ({
           {...getStepProps("authorization_code")}
         >
           <div className="mt-3">
-            <label
-              htmlFor="authCode"
-              className="block text-sm font-medium mb-1"
-            >
+            <Label htmlFor="authCode" className="block mb-1">
               Authorization Code
-            </label>
+            </Label>
             <div className="flex gap-2">
-              <input
+              <Input
                 id="authCode"
                 value={authState.authorizationCode}
                 onChange={(e) => {
@@ -301,11 +301,9 @@ export const OAuthFlowProgress = ({
                   });
                 }}
                 placeholder="Enter the code from the authorization server"
-                className={`flex h-9 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                  authState.validationError
-                    ? "border-destructive"
-                    : "border-input"
-                }`}
+                className={
+                  authState.validationError ? "border-destructive" : ""
+                }
               />
             </div>
             {authState.validationError && (
